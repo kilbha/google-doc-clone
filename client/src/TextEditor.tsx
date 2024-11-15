@@ -11,6 +11,21 @@ function TextEditor() {
     const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
     const [quill, setQuill] = useState<Quill | undefined>(undefined);
 
+
+    // Saving document
+    useEffect(() => {
+        if(socket == null || quill == null) return 
+
+        const interval = setInterval(() => {
+            socket.emit('save-document', quill.getContents())
+        },2000)
+
+        return () => {
+            clearInterval(interval);
+        }
+
+    },[socket,quill])
+
     useEffect(() => {
         if(socket == null && quill == null) return
         
