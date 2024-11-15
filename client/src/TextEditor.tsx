@@ -12,31 +12,8 @@ function TextEditor() {
     const [quill, setQuill] = useState<Quill | undefined>(undefined);
 
 
-    // Saving document
-    useEffect(() => {
-        if(socket == null || quill == null) return 
+    
 
-        const interval = setInterval(() => {
-            socket.emit('save-document', quill.getContents())
-        },2000)
-
-        return () => {
-            clearInterval(interval);
-        }
-
-    },[socket,quill])
-
-    useEffect(() => {
-        if(socket == null && quill == null) return
-        
-        socket?.once("load-document", document => {
-            quill?.setContents(document);
-            quill?.enable();
-        })
-        socket?.emit('get-document', documentId);
-        
-
-    },[socket, quill,documentId])
 
     useEffect(() => {
         const s = io("http://localhost:3001")
@@ -45,6 +22,20 @@ function TextEditor() {
             s.disconnect();
         }
     },[])
+
+    
+    useEffect(() => {
+        if(socket == null && quill == null) return
+        
+        socket?.once("load-document", document => {
+            console.log("Document is ", document);
+            quill?.setContents(document);
+            quill?.enable();
+        })
+        socket?.emit('get-document', documentId);
+        
+
+    },[socket, quill,documentId])
 
     useEffect(() => {
         if(socket == null || quill == null) return 
@@ -70,6 +61,20 @@ function TextEditor() {
         socket.off('receive-changes', handler);
        }
     },[socket, quill])
+
+    // Saving document
+    useEffect(() => {
+        if(socket == null || quill == null) return 
+
+        const interval = setInterval(() => {
+            socket.emit('save-document', quill.getContents())
+        },2000)
+
+        return () => {
+            clearInterval(interval);
+        }
+
+    },[socket,quill])
 
     const modules = {
         toolbar: [

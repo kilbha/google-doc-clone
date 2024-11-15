@@ -13,10 +13,10 @@ const io = require('socket.io')(3001, {
 
 io.on("connection", socket => {
     socket.on('get-document',async (documentId) => {
-        const doc = await findOrCreateDocument(documentId);
-        console.log("document is doc", doc);
+        const doc = await findOrCreateDocument(documentId);   
+        
         socket.join(documentId);
-        socket.emit('load-document',doc);
+        socket.emit('load-document',doc.data);
         socket.on('send-changes', delta => {
             socket.broadcast.to(documentId).emit('receive-changes', delta);
         })
