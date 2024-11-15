@@ -14,6 +14,11 @@ function TextEditor() {
     useEffect(() => {
         if(socket == null && quill == null) return
         
+        socket?.once("load-document", document => {
+            quill?.setContents(document);
+            quill?.enable();
+        })
+        socket?.emit('get-document', documentId);
         
 
     },[socket, quill,documentId])
@@ -70,6 +75,8 @@ function TextEditor() {
         wrapper.innerHTML = "";
         wrapper.append(editor);
         const q = new Quill(editor,{theme:'snow',modules:modules});
+        q.disable();
+        q.setText("Loading...");
         setQuill(q);
     },[])
   
@@ -79,3 +86,5 @@ function TextEditor() {
 }
 
 export default TextEditor
+
+
